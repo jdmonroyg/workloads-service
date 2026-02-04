@@ -25,13 +25,13 @@ public class WorkloadController {
         this.workloadService = workloadService;
     }
 
-    @PostMapping
-    public ResponseEntity<Void> updateWorkload(@RequestBody @Valid WorkloadRequestDTO event) {
-        LOGGER.info("Received workload event for trainer {} action {}", event.username(), event.actionType());
-        workloadService.processWorkload(event);
-        LOGGER.info("Workload event processed successfully");
-        return ResponseEntity.ok().build();
-    }
+//    @PostMapping
+//    public ResponseEntity<Void> updateWorkload(@RequestBody @Valid WorkloadRequestDTO event) {
+//        LOGGER.info("Received workload event for trainer {} action {}", event.username(), event.actionType());
+//        workloadService.processWorkload(event);
+//        LOGGER.info("Workload event processed successfully");
+//        return ResponseEntity.ok().build();
+//    }
 
     @GetMapping("/{username}")
     public ResponseEntity<TrainerWorkloadResponseDTO> getTrainerWorkload(@PathVariable String username){

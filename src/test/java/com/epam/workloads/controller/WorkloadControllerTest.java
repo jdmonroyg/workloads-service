@@ -38,47 +38,47 @@ class WorkloadControllerTest {
     }
 
 
-    @Test
-    void updateWorkloadShouldReturnOk() throws Exception {
-        String json = """
-            {
-              "username":"jdoe",
-              "firstName":"John",
-              "lastName":"Doe",
-              "status":true,
-              "trainingDate":"2026-01-10",
-              "duration":60,
-              "actionType":"ADD"
-            }
-            """;
-
-        mockMvc.perform(post("/workloads")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isOk());
-
-        verify(workloadService).processWorkload(any(WorkloadRequestDTO.class));
-    }
-
-    @Test
-    void updateWorkloadShouldReturnBadRequestForInvalidDto() throws Exception {
-        String json = """
-            {
-              "username":"jdoe",
-              "firstName":"John",
-              "lastName":"Doe",
-              "status":true,
-              "trainingDate":"2026-01-10",
-              "duration":10,
-              "actionType":"ADD"
-            }
-            """;
-
-        mockMvc.perform(post("/workloads")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
-                .andExpect(status().isBadRequest());
-    }
+//    @Test
+//    void updateWorkloadShouldReturnOk() throws Exception {
+//        String json = """
+//            {
+//              "username":"jdoe",
+//              "firstName":"John",
+//              "lastName":"Doe",
+//              "status":true,
+//              "trainingDate":"2026-01-10",
+//              "duration":60,
+//              "actionType":"ADD"
+//            }
+//            """;
+//
+//        mockMvc.perform(post("/workloads")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(json))
+//                .andExpect(status().isOk());
+//
+//        verify(workloadService).processWorkload(any(WorkloadRequestDTO.class));
+//    }
+//
+//    @Test
+//    void updateWorkloadShouldReturnBadRequestForInvalidDto() throws Exception {
+//        String json = """
+//            {
+//              "username":"jdoe",
+//              "firstName":"John",
+//              "lastName":"Doe",
+//              "status":true,
+//              "trainingDate":"2026-01-10",
+//              "duration":10,
+//              "actionType":"ADD"
+//            }
+//            """;
+//
+//        mockMvc.perform(post("/workloads")
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(json))
+//                .andExpect(status().isBadRequest());
+//    }
 
     @Test
     void getTrainerWorkloadShouldReturnDto() throws Exception {
