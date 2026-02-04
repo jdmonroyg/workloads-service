@@ -36,20 +36,19 @@ public class WorkloadServiceImpl implements WorkloadService {
     }
 
     @Override
-    @Transactional
     public void processWorkload(WorkloadRequestDTO request) {
         LOGGER.info("Processing workload event for trainer {} action {}", request.username(), request.actionType());
 
         TrainerWorkload trainer = twRepository.findByUsername(request.username())
                 .orElseGet(() -> {
                     LOGGER.info("Trainer not found, creating new profile for {}",request.username());
-                    TrainerWorkload newTrainer = new TrainerWorkload();
-                    newTrainer.setUsername(request.username());
-                    newTrainer.setFirstName(request.firstName());
-                    newTrainer.setLastName(request.lastName());
-                    newTrainer.setStatus(request.status());
-                    newTrainer.setYears(new ArrayList<>());
-                    return newTrainer;
+                    return new TrainerWorkload(
+                            request.username(),
+                            request.firstName(),
+                            request.lastName(),
+                            request.status(),
+                            new ArrayList<>()
+                    );
                 });
 
         LocalDate date = request.trainingDate();
@@ -60,7 +59,7 @@ public class WorkloadServiceImpl implements WorkloadService {
                 .filter(y -> y.getYearNumber() == yearNum)
                 .findFirst()
                 .orElseGet( () -> {
-                    YearlySummary y = new YearlySummary(yearNum, trainer, new ArrayList<>());
+                    YearlySummary y = new YearlySummary(yearNum, new ArrayList<>());
                     trainer.getYears().add(y);
                     return y;
                 });
@@ -69,7 +68,7 @@ public class WorkloadServiceImpl implements WorkloadService {
                 .filter( m -> m.getMonthNumber()==monthNum)
                 .findFirst()
                 .orElseGet( () -> {
-                    MonthlySummary m = new MonthlySummary(monthNum, 0, yearlySummary );
+                    MonthlySummary m = new MonthlySummary(monthNum, 0 );
                     yearlySummary.getMonths().add(m);
                     return m;
                 });
@@ -86,11 +85,11 @@ public class WorkloadServiceImpl implements WorkloadService {
             default -> throw new IllegalArgumentException("ActionType no supported: " + request.actionType());
         }
         twRepository.save(trainer);
+        LOGGER.info("Workload saved successfully");
 
     }
 
     @Override
-    @Transactional(readOnly = true)
     public TrainerWorkloadResponseDTO getTrainerWorkLoad(String username) {
         LOGGER.info("Getting workload for trainer {}", username);
         TrainerWorkload trainer = twRepository.findByUsername(username)

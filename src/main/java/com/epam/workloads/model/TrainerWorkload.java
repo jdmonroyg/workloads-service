@@ -1,6 +1,9 @@
 package com.epam.workloads.model;
 
-import jakarta.persistence.*;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
@@ -8,26 +11,22 @@ import java.util.List;
  * @author jdmon on 18/12/2025
  * @project workloads-service
  */
-@Entity
-@Table(name = "trainer_workload")
+@Document(collection = "trainer_workload")
+@CompoundIndex(name = "trainer_name_idx", def = "{'firstName': 1, 'lastName': 1}")
 public class TrainerWorkload {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Id
+    private String id;
+
+    @Indexed(unique = true)
     private String username;
 
-    @Column(nullable = false)
     private String firstName;
 
-    @Column(nullable = false)
     private String lastName;
 
-    @Column(nullable = false)
     private Boolean status;
 
-    @OneToMany(mappedBy = "trainer", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<YearlySummary> years;
 
     public TrainerWorkload() {
@@ -41,11 +40,11 @@ public class TrainerWorkload {
         this.years = years;
     }
 
-    public Long getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 

@@ -2,6 +2,8 @@ package com.epam.workloads.consumer;
 
 import com.epam.workloads.dto.request.WorkloadRequestDTO;
 import com.epam.workloads.service.WorkloadService;
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.Validator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
@@ -9,6 +11,8 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.stereotype.Component;
 import tools.jackson.databind.ObjectMapper;
+
+import java.util.Set;
 
 /**
  * @author jdmon on 12/01/2026
@@ -20,10 +24,12 @@ public class WorkloadConsumer {
     private static final Logger LOGGER = LoggerFactory.getLogger(WorkloadConsumer.class);
     private final WorkloadService workloadService;
     private final ObjectMapper objectMapper;
+    private final Validator validator;
 
-    public WorkloadConsumer(WorkloadService workloadService, ObjectMapper objectMapper) {
+    public WorkloadConsumer(WorkloadService workloadService, ObjectMapper objectMapper, Validator validator) {
         this.workloadService = workloadService;
         this.objectMapper = objectMapper;
+        this.validator = validator;
     }
 
     @JmsListener(destination = "workload.queue")
@@ -35,6 +41,13 @@ public class WorkloadConsumer {
                 MDC.put("transactionId", transactionId);
             }
             WorkloadRequestDTO request = objectMapper.readValue(jsonMessage, WorkloadRequestDTO.class);
+
+            Set<ConstraintViolation<WorkloadRequestDTO>> violations = validator.validate(request);
+            if (!violations.isEmpty()) {
+                //DLQ is activated when the request has bad parameters
+                LOGGER.error("Invalid workload request: {}", violations);
+                throw new IllegalArgumentException("Message validation failed: violations constrains");
+            }
 
             if (request.duration() == 20) {
                 //Active DLQ, when the duration is 20 min
