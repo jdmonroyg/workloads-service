@@ -9,6 +9,7 @@ import com.epam.workloads.model.YearlySummary;
 import org.junit.jupiter.api.Test;
 import org.mapstruct.factory.Mappers;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,34 +24,41 @@ class TrainerWorkloadMapperTest {
 
     @Test
     void shouldMapTrainerWorkloadToResponseDto() {
+        // Arrange
         TrainerWorkload trainer = new TrainerWorkload();
         trainer.setUsername("jdoe");
         trainer.setFirstName("John");
         trainer.setLastName("Doe");
         trainer.setStatus(true);
 
-        YearlySummary yearly = new YearlySummary(2026, trainer, List.of());
+        YearlySummary yearly = new YearlySummary(2026, new ArrayList<>());
         trainer.setYears(List.of(yearly));
 
+        // Act
         TrainerWorkloadResponseDTO dto = mapper.trainerToTrainerWorkloadResp(trainer);
 
+        // Assert
         assertEquals("jdoe", dto.username());
         assertEquals("John", dto.firstName());
         assertEquals("Doe", dto.lastName());
-        assertEquals("true", dto.status());
+        assertTrue(Boolean.parseBoolean(dto.status()));
         assertEquals(1, dto.years().size());
         assertEquals(2026, dto.years().getFirst().yearNumber());
     }
 
     @Test
     void shouldMapYearlySummaryToResponseDto() {
-        YearlySummary yearly = new YearlySummary(2026, null, List.of(
-                new MonthlySummary(1, 60, null),
-                new MonthlySummary(2, 90, null)
+        // Arrange
+        // Eliminamos los nulos de los constructores (ya no existen esos parámetros)
+        YearlySummary yearly = new YearlySummary(2026, List.of(
+                new MonthlySummary(1, 60),
+                new MonthlySummary(2, 90)
         ));
 
+        // Act
         YearlySummaryResponseDTO dto = mapper.yearlySummaryToYearlySummaryResponseDTO(yearly);
 
+        // Assert
         assertEquals(2026, dto.yearNumber());
         assertEquals(2, dto.months().size());
         assertEquals(1, dto.months().getFirst().monthNumber());
@@ -59,12 +67,14 @@ class TrainerWorkloadMapperTest {
 
     @Test
     void shouldMapMonthlySummaryToResponseDto() {
-        MonthlySummary monthly = new MonthlySummary(3, 120, null);
+        // Arrange
+        MonthlySummary monthly = new MonthlySummary(3, 120);
 
+        // Act
         MonthlySummaryResponseDTO dto = mapper.monthlySummaryToMonthlySummaryResponseDTO(monthly);
 
+        // Assert
         assertEquals(3, dto.monthNumber());
         assertEquals(120, dto.trainingSummaryDuration());
     }
-
 }
