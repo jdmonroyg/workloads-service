@@ -12,7 +12,6 @@ import com.epam.workloads.service.WorkloadService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -84,6 +83,15 @@ public class WorkloadServiceImpl implements WorkloadService {
                     .setTrainingSummaryDuration(Math.max(currentDuration - requestDuration, 0));
             default -> throw new IllegalArgumentException("ActionType no supported: " + request.actionType());
         }
+
+        if (monthlySummary.getTrainingSummaryDuration() == 0) {
+            yearlySummary.getMonths().remove(monthlySummary);
+        }
+
+        if (yearlySummary.getMonths().isEmpty()) {
+            trainer.getYears().remove(yearlySummary);
+        }
+
         twRepository.save(trainer);
         LOGGER.info("Workload saved successfully");
 
