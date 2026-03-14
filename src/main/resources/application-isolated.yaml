@@ -1,0 +1,20 @@
+spring:
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/dummy
+  activemq:
+    broker-url: vm://localhost?broker.persistent=false
+
+management:
+  health:
+    mongo:
+      enabled: false
+    jms:
+      enabled: false
+
+
+
+
+
+
+
