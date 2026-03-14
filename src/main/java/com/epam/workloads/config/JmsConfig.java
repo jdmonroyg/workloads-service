@@ -5,6 +5,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.jms.autoconfigure.DefaultJmsListenerContainerFactoryConfigurer;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.support.converter.JacksonJsonMessageConverter;
 import org.springframework.jms.support.converter.MessageConverter;
@@ -14,6 +15,7 @@ import org.springframework.jms.support.converter.MessageType;
  * @author jdmon on 12/01/2026
  * @project workloads-service
  */
+@Configuration
 public class JmsConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JmsConfig.class);
